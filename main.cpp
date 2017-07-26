@@ -7,6 +7,7 @@ Final Project
 //includes
 #include <iostream>
 #include <string>
+#include "graph.cpp"
 
 //prototypes
 void menu();
@@ -18,8 +19,9 @@ int main(){
 
 //implementation
 void menu(){
-    int input=-1;//input variable
 
+    int input=-1;//input variable
+    Graph graph;
     //menu loop
     while(input!=9){//while exit is not selected
         //print menu
@@ -34,6 +36,8 @@ void menu(){
         switch(input){
             case 1://build 2d set
                 //add function to ask for how many points
+                graph.getInput();
+                break;
             case 9://Quit
                 std::cout<<"Goodbye!"<<std::endl;
                 return;
