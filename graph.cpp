@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include <limits>
 
 /*
     implementation
@@ -16,6 +17,7 @@ Graph::Graph(){
     numVertices=0;
     originCoord=0;
     endCoord=10;
+    head=NULL;
 
     //initialize graph
     clearGraph();
@@ -212,7 +214,7 @@ void Graph::clearGraph(){
 void Graph::resetMatrix(){
     for(int i=0;i<100;i++){
         for(int j=0;j<100;j++){
-            matrix[i][j]=0;
+            matrix[i][j]=std::numeric_limits<double>::infinity();
         }
     }
 }
@@ -225,15 +227,251 @@ void Graph::constructMatrix(){
     for(int i=0;i<vertices.size();i++){//loop through vertices
         for(int j=0;j<vertices[i].adjacent.size();j++){//loop through adjacent vector for each vertex
                 k=vertices[i].adjacent[j].weight;//get weight
-                int m = vertices[i].adjacent[j].v->key;
+                int m = vertices[i].adjacent[j].v->key;//get key
+                //it's a symetric, hollow matrix so do this
                 matrix[i][m-1]=k;
                 matrix[m-1][i]=k;
         }
     }
+}
+
+/*
+    Sets all the vertices to unvisited. I assume
+    i will make use of this when running my algorithms all the time
+*/
+void Graph::unvisitVertices(){
     for(int i=0;i<vertices.size();i++){
-        for(int j=0;j<vertices.size();j++){
-            std::cout<<matrix[i][j]<<" ";
-        }
-        std::cout<<std::endl;
+        vertices[i].visited=false;
     }
+}
+
+/*
+    This is an algorithm that makes use of the adjacency matrix
+    to find the shortest path. I'm going to attempt to just come up
+    with an algorithm myself and I suspect this will be the bulk of work
+    for this project.
+*/
+void Graph::adjacencyMatrixAlgorithm(){
+
+    //make the node for the path lists
+    node* adj = new node();
+    adj->name="Adjacency Matrix Algorithm";
+
+    //if the list is empty, set this to the head
+    if(head==NULL){
+        head=adj;
+    }
+
+    //find end of list
+    node* walker = head;
+    while(walker->nextAlgorithm!=NULL){
+        walker=walker->nextAlgorithm;
+    }//walker is now on the last element
+    walker->nextAlgorithm=adj;//set its next to this one
+
+    //define what we can of the node
+    std::vector<vertex> shortestPath;
+    vertex *mover = &vertices[0];
+
+}
+/*
+    print path
+*/
+void Graph::printPath(std::string name){
+    if(head==NULL){
+        std::cout<<"No paths defined yet."<<std::endl;
+        return;
+    }
+    node *walker = head;
+    while(walker->nextAlgorithm!=NULL){
+        if((walker->name==name) or (name=="all")){
+            std::cout<<"Algorithm used: "<<walker->name<<std::endl;
+            std::cout<<"Path found: ";
+            for(int i=0;i<walker->path.size();i++){
+                if(walker->path[i].key==2){
+                    std::cout<<walker->path[i].key;
+                }else{
+                    std::cout<<walker->path[i].key<<"->";
+                }
+            }
+            std::cout<<std::endl;
+            std::cout<<"Weight of path: "<<walker->weight<<std::endl;
+        }
+        std::cout<<walker->name<<std::endl;
+        walker=walker->nextAlgorithm;
+    }
+}
+/*
+    Floyd's shortest path algorithm
+*/
+void Graph::floyd(){
+    if(numVertices==2){
+        std::cout<<"There are no vertices in this graph."<<std::endl;
+        return;
+    }
+    //setting next matrix
+    int path[100][100];//to store the paths taken
+    for(int i=0;i<100;i++){
+        for(int j=0;j<100;j++){
+            path[i][j]==-1;
+        }
+    }
+    //set up temporary matrix so as to not alter the old one
+    double temp[100][100];//to not alter the adj matrix
+    for(int i=0;i<numVertices;i++){
+        for(int j=0;j<numVertices;j++){
+            path[i][j]=0;
+            temp[i][j]=matrix[i][j];
+        }
+    }
+    //initialize path array
+    for(int i=0;i<vertices.size();i++){//loop through vertices
+        for(int j=0;j<vertices[i].adjacent.size();j++){//loop through adjacent vector for each vertex
+                int m = vertices[i].adjacent[j].v->key;//get key
+                //it's a symetric, hollow matrix so do this
+                path[i][m-1]=i+1;
+                //path[m-1][i]=i+1;
+        }
+    }
+    for(int i=0;i<numVertices;i++){
+        path[i][i]=i;
+    }
+
+    //algorithm implementation
+    for(int k=0;k<numVertices;k++){
+        for(int i=0;i<numVertices;i++){
+            for(int j=0;j<numVertices;j++){
+                if(temp[i][k]+temp[k][j]<temp[i][j]){
+                    temp[i][j]=temp[i][k]+temp[k][j];
+                    path[i][j]=path[k][j];
+                }
+            }
+        }
+    }
+
+    //finding path now
+    node floyd;
+    floyd.name="Floyds Algorithm";
+    //path doesn't exist
+    if(path[0][1]==-1){//Path doesn't exist
+        floyd.weight=-1;//
+        return;
+    }
+    //otherwise find the path
+    int i=0, j=1;
+    do{
+        floyd.path.push_back(vertices[i]);
+        i=path[j][i]-1;
+    }while(i!=1);
+    floyd.path.push_back(vertices[i]);
+
+    floyd.weight = temp[0][1];//set the weight
+    //add this node to the linked list of solutions
+    if(head==NULL){//if the list is empty
+        head=&floyd;
+    }
+    node *walker=head;
+    while(walker->nextAlgorithm!=NULL){//iterate through list
+        if(walker->name==floyd.name){//if this solution already exists
+            return;
+        }
+        walker=walker->nextAlgorithm;
+    }//walker is now on the last node
+    walker->nextAlgorithm=&floyd;
+    //finally print the output
+    std::cout<<"\nPath found using floyds Algorithm with weight "<<floyd.weight<<": ";
+    for(int i=0;i<floyd.path.size();i++){
+        if(floyd.path[i].isEnd){
+            std::cout<<floyd.path[i].key;
+        }else{
+            std::cout<<floyd.path[i].key<<"->";
+        }
+    }
+    std::cout<<std::endl<<std::endl;
+}
+
+/*
+    Implementing Dijstra's Algorithm
+*/
+void Graph::dijkstra(){
+    if(numVertices==2){
+        std::cout<<"There are no vertices in this graph."<<std::endl;
+        return;
+    }
+    double dist[numVertices];//will hold the shortest distance for each point
+    bool sptSet[numVertices];//to check if the vertex has been processed
+    //creating node
+    node dijkstra;
+    dijkstra.name="Dijkstras Algorithm";
+    //if this is the first one, add it to the list
+    if(head==NULL){
+        head=&dijkstra;
+    }
+    bool exists = false;
+    node *walk=head;
+    /*
+    while(walk->nextAlgorithm!=NULL){
+        if(walk->name=dijkstra.name){
+            exists=true;
+        }
+        walk=walk->nextAlgorithm;
+    }//now walker is the last one in the list
+    */
+    if(!exists){
+        walk->nextAlgorithm=&dijkstra;//add dijkstra to it
+    }
+    //init these two arrays
+    for (int i = 0; i < numVertices; i++){
+        dist[i] = std::numeric_limits<double>::infinity(), sptSet[i] = false;
+    }
+    //set distance from start vertex to zero
+    int parent[numVertices];//to store path
+    dist[0]=0;
+    parent[0]=-1;
+
+    // Find shortest path for all vertices
+    for (int count = 0; count < numVertices-1; count++){
+        int u = minDistance(dist, sptSet);
+        sptSet[u] = true;//mark it as visited
+        for (int v = 0; v < numVertices; v++){
+            if (!sptSet[v] && matrix[u][v] && dist[u] != std::numeric_limits<double>::infinity() && dist[u]+matrix[u][v] < dist[v]){
+                dist[v] = dist[u] + matrix[u][v];
+                parent[v]=u;
+            }
+        }
+     }
+
+     //now more node work
+     dijkstra.weight=dist[1];
+     int j=1;
+     while(j!=100){
+         dijkstra.path.insert(dijkstra.path.begin(),vertices[j]);
+         if(parent[j]==-1){
+             break;
+         }
+         j=parent[j];
+     }
+     //finally print the output
+     std::cout<<"\nPath found using Dijkstra's Algorithm with weight "<<dijkstra.weight<<": ";
+     for(int i=0;i<dijkstra.path.size();i++){
+         if(dijkstra.path[i].isEnd){
+             std::cout<<dijkstra.path[i].key;
+         }else{
+             std::cout<<dijkstra.path[i].key<<"->";
+         }
+     }
+     std::cout<<std::endl<<std::endl;
+}
+//minimum distance function to find minimum non visited vertex for dijkstra
+int Graph::minDistance(double dist[], bool sptSet[])
+{
+   // Initialize min value
+   int min = 10000, min_index;
+
+   for (int v = 0; v < numVertices; v++){
+       if (sptSet[v] == false && dist[v] <= min){
+           min = dist[v], min_index = v;
+       }
+   }
+   return min_index;
 }
