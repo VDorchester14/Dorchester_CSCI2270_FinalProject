@@ -16,7 +16,7 @@ Graph::Graph(){
     //set variables;
     numVertices=0;
     originCoord=0;
-    endCoord=10;
+    endCoord=100;
     head=NULL;
 
     //initialize graph
@@ -123,8 +123,6 @@ void Graph::addRandomEdges(){
             do{
                 x = (min+1) + (rand() % static_cast<int>((max-1) - (min+1) + 1));
             }while(!addEdge(i,x));
-            std::cout<<"from "<<i<<" to "<<x<<std::endl;
-
         }
     }
 }
