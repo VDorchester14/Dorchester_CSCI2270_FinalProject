@@ -9,6 +9,7 @@ Final Project
 #include <string>
 #include "graph.cpp"
 
+
 //prototypes
 void menu();
 
@@ -27,6 +28,9 @@ void menu(){
         //print menu
         std::cout<<"======Main Menu======"<<std::endl;
         std::cout<<"1. Build a set of n random points in 2D"<<std::endl;
+        std::cout<<"2. Print vertices of graph"<<std::endl;
+        std::cout<<"3. Display edges of graph"<<std::endl;
+        std::cout<<"4. Clear the graph"<<std::endl;
         std::cout<<"9. Quit"<<std::endl;
 
         //get input
@@ -36,7 +40,20 @@ void menu(){
         switch(input){
             case 1://build 2d set
                 //add function to ask for how many points
+                graph.clearGraph();
+                graph.addEndPoints();
                 graph.getInput();
+                graph.createVertices();
+                break;
+            case 2:
+                graph.displayVertices();
+                break;
+            case 3:
+                graph.displayEdges();
+                break;
+            case 4:
+                graph.clearGraph();
+                graph.addEndPoints();
                 break;
             case 9://Quit
                 std::cout<<"Goodbye!"<<std::endl;
