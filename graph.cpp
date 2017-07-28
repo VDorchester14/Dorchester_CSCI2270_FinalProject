@@ -110,15 +110,41 @@ double Graph::calculateWeight(int key1, int key2){
     //return
     return weight;
 }
+/*
+    Adds the edges randomly
+*/
+void Graph::addRandomEdges(){
+    std::cout<<"Building edges."<<std::endl;
+    int min, max, x;
+    min=2;
+    max=numVertices-1;
+    for(int i=1;i<numVertices/2;i++){
+        for(int j=0;j<numVertices/2;j++){
+            do{
+                x = (min+1) + (rand() % static_cast<int>((max-1) - (min+1) + 1));
+            }while(!addEdge(i,x));
+            std::cout<<"from "<<i<<" to "<<x<<std::endl;
 
+        }
+    }
+}
 /*
     This method adds an edge to the graph
     edge goes both ways
 */
-void Graph::addEdge(int key1, int key2){
+bool Graph::addEdge(int key1, int key2){
     if((key1>numVertices) or (key2>numVertices)){
         std::cout<<"Error adding edge."<<std::endl;
-        return;
+        return false;
+    }
+    if(key1==key2){
+        std::cout<<"Cannot build edge to self."<<std::endl;
+        return false;
+    }
+    for(int i=0;i<vertices[key1-1].adjacent.size();i++){
+        if(key2==vertices[key1-1].adjacent[i].v->key){
+            return false;
+        }
     }
     //from key1 to key2
     double weight = calculateWeight(key1, key2);
@@ -131,6 +157,7 @@ void Graph::addEdge(int key1, int key2){
     j.weight=weight;
     j.v=&vertices[key1-1];
     vertices[key2-1].adjacent.push_back(j);
+    return true;
 }
 
 /*
@@ -247,9 +274,7 @@ void Graph::unvisitVertices(){
 
 /*
     This is an algorithm that makes use of the adjacency matrix
-    to find the shortest path. I'm going to attempt to just come up
-    with an algorithm myself and I suspect this will be the bulk of work
-    for this project.
+    to find the shortest path.
 */
 void Graph::adjacencyMatrixAlgorithm(){
 
@@ -273,6 +298,8 @@ void Graph::adjacencyMatrixAlgorithm(){
     std::vector<vertex> shortestPath;
     vertex *mover = &vertices[0];
 
+    //TODO
+    //actually implement this algorithm lol
 }
 /*
     print path

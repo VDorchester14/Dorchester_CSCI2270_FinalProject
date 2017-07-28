@@ -60,7 +60,7 @@ class Graph{
         void getInput();//gets input for number of points to create
         //graph functions
         void createVertices();//creates vertices w/ random coordinates
-        void addEdge(int, int);//adds an edge to the graph
+        bool addEdge(int, int);//adds an edge to the graph
         void addVertex(vertex* v);//adds a vertex to the graph
         void displayVertices();//prints the coordinates of vertices
         void clearGraph();//deletes all vertices in the graph
@@ -68,6 +68,7 @@ class Graph{
         double calculateWeight(int, int);//calcs the weights
         void displayEdges();//displays the edges of the graph
         void unvisitVertices();//unvisits all the vertices
+        void addRandomEdges();
         //matrix functions
         void constructMatrix();//makes an adjacency matrix
         void resetMatrix();

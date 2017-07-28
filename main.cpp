@@ -49,12 +49,12 @@ void menu(){
                 break;
             case 1://build 2d set7
                 //add function to ask for how many points
-                //graph.clearGraph();
-                //graph.addEndPoints();
-                //graph.getInput();
-                //graph.createVertices();
-                //graph.constructMatrix();
-                std::cout<<"Function currently not available."<<std::endl;
+                graph.clearGraph();
+                graph.addEndPoints();
+                graph.getInput();
+                graph.createVertices();
+                graph.addRandomEdges();
+                graph.constructMatrix();
                 break;
             case 2:
                 graph.displayVertices();
@@ -73,7 +73,7 @@ void menu(){
                 break;
             case 6:
                 graph.floyd();
-                graph.printPath("Floyd's Algorithm");
+                //graph.printPath("Floyd's Algorithm");
                 break;
             case 7:
                 graph.dijkstra();
