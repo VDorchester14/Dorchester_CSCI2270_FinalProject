@@ -17,7 +17,8 @@ Dependencies/System requirements:
 
 Bugs:
   -In the menu, if you type a character or string, it will loop endlessly.
-  -The functionality to randomly generate a list has not been finished yet, and that is open for improvement in the future.
   -The full functionality of storing each solution in a linked list has not been ironed out, and is also open to future improvements.
   -The adjacencyMatrixFunction method is currently empty, but I plan to design and implement my own algorithm as a challenge for myself.
   -If you clear the graph, there is currently no way to get that graph back besides restarting the program.
+  -So it works best if you choose a reasonable number of vertices, ie, 10-30. if you add too many it doesnt seem to work and if you add too few it doesn't seem to work.
+  -also, given enough points, it is bound to generate one that is roughly at the midpoint of the start and finish. because of this, the shortest path has almost always been a list of just 3 points going from start, to midpoint, to finish. Geometrically this makes sense, but it is boring.
